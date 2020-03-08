@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+import os
+
 # Flask settings
 DEBUG = False
 
@@ -39,6 +41,6 @@ MODEL_META_DATA = {
     'license': '{}'.format(MODEL_LICENSE)
 }
 
-DEFAULT_EMBEDDING_CHECKPOINT = "assets/vggish_model.ckpt"
-DEFAULT_PCA_PARAMS = "assets/vggish_pca_params.npz"
-DEFAULT_CLASSIFIER_MODEL = "assets/classifier_model.h5"
+DEFAULT_EMBEDDING_CHECKPOINT = os.path.join("assets","vggish_model.ckpt")
+DEFAULT_PCA_PARAMS = os.path.join("assets","vggish_pca_params.npz")
+DEFAULT_CLASSIFIER_MODEL = os.path.join("assets","classifier_model.h5")

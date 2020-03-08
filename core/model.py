@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 import numpy as np
-import h5py
 import pandas as pd
 import tensorflow as tf
 from . import vggish_input
@@ -24,7 +23,7 @@ from . import vggish_slim
 from config import MODEL_META_DATA as model_meta
 from maxfw.model import MAXModelWrapper
 from config import DEFAULT_EMBEDDING_CHECKPOINT, DEFAULT_PCA_PARAMS, DEFAULT_CLASSIFIER_MODEL
-
+import os
 
 class ModelWrapper(MAXModelWrapper):
     """
@@ -38,8 +37,7 @@ class ModelWrapper(MAXModelWrapper):
                  classifier_model=DEFAULT_CLASSIFIER_MODEL):
         # Initialize the classifier model
         self.session_classify = tf.keras.backend.get_session()
-        with h5py.File(classifier_model) as f:
-            self.classify_model = tf.keras.models.load_model(f, compile=False)
+        self.classify_model = tf.keras.models.load_model(classifier_model, compile=False)
 
         # Initialize the vgg-ish embedding model
         self.graph_embedding = tf.Graph()
@@ -54,7 +52,8 @@ class ModelWrapper(MAXModelWrapper):
         self.pproc = vggish_postprocess.Postprocessor(pca_params)
 
         # Metadata
-        self.indices = pd.read_csv('samples/class_labels_indices.csv')
+        fname = os.path.join("assets","class_labels_indices.csv")
+        self.indices = pd.read_csv(fname)
 
     def generate_embeddings(self, wav_file):
         """
@@ -144,7 +143,7 @@ class ModelWrapper(MAXModelWrapper):
         Returns :
             preds : list of (label_id,label,probability) tuples for top 5 class scores.
         """
-        top_preds = raw_preds.argsort()[-5:][::-1]
+        top_preds = raw_preds.argsort()[-526:][::-1]
         preds = [(self.indices.loc[top_preds[i]]['mid'], self.indices.loc[top_preds[i]]['display_name'],
                   raw_preds[top_preds[i]]) for i in range(len(top_preds))]
         return preds
